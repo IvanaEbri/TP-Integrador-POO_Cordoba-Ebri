@@ -11,5 +11,3 @@ except OperationalError as e:
 class BaseModel(Model):
     class Meta:
         database = sqlite_db
-
-class 
