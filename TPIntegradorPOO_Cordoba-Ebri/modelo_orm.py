@@ -15,7 +15,7 @@ class BaseModel(Model):
         database = sqlite_db
 
 class Etapa(BaseModel):
-    """Entidad Etapa de ejecucio"""
+    """Entidad Etapa de ejecucion"""
     id_etapa = AutoField(primary_key = True)
     etapa = TextField(unique = True, null = False)
     
