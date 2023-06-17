@@ -35,19 +35,22 @@ class GesionarObra (metaclass = ABCMeta):
         """sentencias necesarias para realizar la creación de la
         estructura de la base de datos (tablas y relaciones) utilizando el método de instancia
         “create_tables(list)” del módulo peewee"""
-        pass
+        self.conectar_db()
+        sqlite_db.create_tables([Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
 
     def limpiar_datos(self):
         """sentencias necesarias para realizar la “limpieza” de
         los datos nulos y no accesibles del Dataframe"""
-        pass
+        self.extraer_datos()
+        
 
     def cargar_datos(self):
         """sentencias necesarias para persistir los datos de las obras (ya transformados y 
         “limpios”) que contiene el objeto Dataframe en la base de datos relacional SQLite. 
         Para ello se debe utilizar el método de clase Model create() en cada una 
         de las clase del modelo ORM definido"""
-        pass
+        self.mapear_orm()
+        self.limpiar_datos()
 
     def nueva_obra(self):
         pass
