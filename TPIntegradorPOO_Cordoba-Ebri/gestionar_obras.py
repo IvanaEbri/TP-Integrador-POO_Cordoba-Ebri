@@ -36,13 +36,24 @@ class GesionarObra (metaclass = ABCMeta):
         estructura de la base de datos (tablas y relaciones) utilizando el método de instancia
         “create_tables(list)” del módulo peewee"""
         self.conectar_db()
-        sqlite_db.create_tables([Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
+        try:
+            sqlite_db.create_tables([Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
+        except Exception as e:
+            print("Error al crear las tablas.", e)
+            exit()
 
     def limpiar_datos(self):
-        """sentencias necesarias para realizar la “limpieza” de
-        los datos nulos y no accesibles del Dataframe"""
-        self.extraer_datos()
-        
+        """Limpieza del dataset, se requiere latitud y longitud (ubicacion de obra), monto contratado y el barrio en el que se realiza por lo que se deshechan los NaN"""
+        try:
+            df = self.extraer_datos()
+            df.dropna(subset = ["lat"], axis = 0, inplace = True)
+            df.dropna(subset = ["lng"], axis = 0, inplace = True)
+            df.dropna(subset = ["monto_contrato"], axis = 0, inplace = True)
+            df.dropna(subset = ["barrio"], axis = 0, inplace = True)
+            return df
+        except Exception as e:
+            print("Error al limpier el dataset.", e)
+            exit()
 
     def cargar_datos(self):
         """sentencias necesarias para persistir los datos de las obras (ya transformados y 
