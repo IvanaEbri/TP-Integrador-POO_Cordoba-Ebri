@@ -1,7 +1,7 @@
 from peewee import *
 from datetime import *
 
-sqlite_db = SqliteDatabase('./TPIntegradorPOO_Cordoba-Ebri/Obras_CABA.db', pragmas={'journal_mode': 'wal'})
+sqlite_db = SqliteDatabase('./TPIntegradorPOO_Cordoba-Ebri/obras_urbanas.db', pragmas={'journal_mode': 'wal'})
 try:
     """Intento de conexion a la base de datos"""
     sqlite_db.connect()
