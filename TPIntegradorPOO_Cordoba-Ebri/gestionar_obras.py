@@ -1,16 +1,22 @@
 from modelo_orm import *
 import pandas as pd
 from abc import ABCMeta
+import csv
+from correccion_csv import correccion_dataset
 
+#obras_csv = "./TPIntegradorPOO_Cordoba-Ebri/observatorio-de-obras-urbanas.csv"
+#las comillas doble que tiene el archivo original hacen que no se pueda separar por la ',' cada linea por lo que se corrige por funcion y se genera el segundo archivo
+obras_csv ='./TPIntegradorPOO_Cordoba-Ebri/observatorio-de-obras-urbanas_correccion.csv'
 
 class GesionarObra (metaclass = ABCMeta):
-    def extraer_datos(self):
-        """sentencias necesarias para manipular el dataset a través de un objeto 
-        Dataframe del módulo “pandas” """
-        obras_csv = "./TPIntegradorPOO_Cordoba-Ebri/observatorio-de-obras-urbanas.csv"
 
+    def extraer_datos(self):
+        """Lectura del dataset mediante modulo 'pandas'"""
         try:
-            df = pd.read_csv(obras_csv, sep=",")
+            #Funcion que reemplaza las '""""' por "'", '""' por '"' y elimina la primer y ultima comilla doble en caso que la hubiese
+            correccion_dataset()
+            # Separa los datos por las ',', mantiene las citas que se encuentran entre '"'
+            df = pd.read_csv(obras_csv, sep=',', skipinitialspace=True, quotechar='"', on_bad_lines='skip')
             return df
         except FileNotFoundError as e:
             print("Error al conectar con el dataset.", e)
