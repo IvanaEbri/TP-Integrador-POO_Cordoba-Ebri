@@ -35,7 +35,7 @@ class GesionarObra (metaclass = ABCMeta):
         """sentencias necesarias para realizar la creación de la
         estructura de la base de datos (tablas y relaciones) utilizando el método de instancia
         “create_tables(list)” del módulo peewee"""
-        self.conectar_db()
+        #self.conectar_db()
         try:
             sqlite_db.create_tables([Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
         except Exception as e:
@@ -48,8 +48,8 @@ class GesionarObra (metaclass = ABCMeta):
             df = self.extraer_datos()
             df.dropna(subset = ["lat"], axis = 0, inplace = True)
             df.dropna(subset = ["lng"], axis = 0, inplace = True)
-            df.dropna(subset = ["monto_contrato"], axis = 0, inplace = True)
             df.dropna(subset = ["barrio"], axis = 0, inplace = True)
+            print(df.count())
             return df
         except Exception as e:
             print("Error al limpier el dataset.", e)
@@ -61,7 +61,78 @@ class GesionarObra (metaclass = ABCMeta):
         Para ello se debe utilizar el método de clase Model create() en cada una 
         de las clase del modelo ORM definido"""
         self.mapear_orm()
-        self.limpiar_datos()
+        df = self.limpiar_datos()
+        #Carga de datos en la tabla 'etapa'
+        etapas_unique = list(df['etapa'].unique())
+        for elem in etapas_unique:
+            try:
+                Etapa.create(etapa = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Etapas de Obra.", e)
+        #Carga de datos en la tabla 'tipo'
+            tipos_unique = list(df['tipo'].unique())
+        for elem in tipos_unique:
+            try:
+                Tipo.create(tipo = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Tipos de Obra.", e)
+        #Carga de datos en la tabla 'areas_responsables'
+        areas_unique = list(df['area_responsable'].unique())
+        for elem in areas_unique:
+            try:
+                AreaResponsable.create(area_responsable = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Areas Responsables de Obra.", e)
+        #Carga de datos en la tabla 'barrios'
+        barrios_unique = df.drop_duplicates(subset= 'barrio')
+        dic_barrio_comuna = {}
+        for index, row in barrios_unique.iterrows():
+            try:
+                barrio = row['barrio']
+                comuna = row['comuna']
+                dic_barrio_comuna[barrio] = comuna
+            except Exception as e:
+                print("Error en la lectura del dataset.", e)
+        for key in dic_barrio_comuna.keys():
+            try:
+                Barrio.create(barrio=key, comuna = dic_barrio_comuna[key])
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Barrios de Obra.", e)
+        #Carga de datos en la tabla 'contrataciones'
+        contrataciones_unique = list(df['contratacion_tipo'].unique())
+        for elem in contrataciones_unique:
+            try:
+                Contratacion.create(contratacion = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Contrataciones de Obra.", e)
+        #Carga de datos en la tabla 'financiamientos'
+            financiamientos_unique = list(df['financiamiento'].unique())
+        for elem in financiamientos_unique:
+            try:
+                Financiamiento.create(financiamiento = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Financiamientos de Obra.", e)
+        #Carga de datos en la tabla 'obras_ciudad'
+        try:
+            for elem in df.values:
+                etapa_obra = Etapa.get(Etapa.etapa == elem[3])
+                tipo_obra = Tipo.get(Tipo.tipo == elem[4])
+                area_responsable_obra = AreaResponsable.get( AreaResponsable.area_responsable == elem[5])
+                barrio_obra = Barrio.get( Barrio.barrio == elem[9])
+                contratacion_obra = Contratacion.get( Contratacion.contratacion == elem[23])
+                compromiso_bool = self.valor_booleano(elem, 28)
+                destacada_bool = self.valor_booleano(elem, 29)
+                ba_elige_bool = self.valor_booleano(elem, 30)
+                financiamiento_obra =  Financiamiento.get( Financiamiento.financiamiento == elem[35])
+                ObraCiudad.create(entorno= elem[1], nombre= elem[2], etapa_obra=etapa_obra, tipo_obra=tipo_obra, area_responsable_obra=area_responsable_obra, descripcion= elem[6], monto_contratado= elem[7], barrio_obra=barrio_obra, direccion= elem[10], latitud= elem[11], longitud= elem[12], fecha_inicio= elem[13], fecha_fin_inicias= elem[14],plazo_meses= elem[15],porcentaje= elem[16],licitacion_oferta_empresa= elem[21], licitacion_anio= elem[22], contratacion_obra=contratacion_obra, nro_contratacion= elem[24], cuit_contratista= elem[25], beneficiarios= elem[26], mano_obra= elem[27], compromiso=compromiso_bool, destacada=destacada_bool, ba_elige=ba_elige_bool, expediente_nro= elem[33], financiamiento_obra= financiamiento_obra)
+        except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Obras de la Ciudad.", e)
+
+    def valor_booleano(self,fila, indice):
+        if fila[indice] == "SI":
+            return True
+        else:
+            return False
 
     def nueva_obra(self):
         pass

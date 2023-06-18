@@ -1,4 +1,4 @@
 from gestionar_obras import *
 
 gestor = GesionarObra()
-gestor.limpiar_datos()
+gestor.cargar_datos()
