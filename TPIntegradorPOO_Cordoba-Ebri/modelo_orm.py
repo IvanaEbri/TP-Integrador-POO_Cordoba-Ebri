@@ -240,11 +240,42 @@ class Obra (BaseModel):
 
     def iniciar_contratacion(self):
         #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
-        pass
+        #Etapa a en licitacion
+        try:
+            self.etapa_obra= Etapa.select().where(Etapa.id_etapa==10)
+        except IntegrityError as e:
+                print("Error al modificar la etapa de obra.", e)
 
     def adjudicar_obra(self):
-        #empresa por clave forn(Crear tabla y carga de datos y si elijo pór empresa no necesito la columna cuil pq  esta en tabla empresa) y nro_expediente, etapaa a sin iniciar
-        pass
+        #Se establece la empresa que realizará la obra, el numero de expediente y etapa a "sin iniciar"
+        #Seleccion de la empresa que llevará a cabo la obra
+        while True:
+            query= Empresa.select()
+            max_id = Empresa.select(fn.Max(Empresa.id_empresa)).scalar()
+            for empr in query:
+                print(f"   -{empr.id_empresa}_{empr.empresa}")
+            try:
+                empresa_no = int(input("Ingrese el número correspondiente a la empresa que realizará la obra "))
+                if empresa_no >= 0 and empresa_no<= max_id:
+                    self.licitacion_oferta_empresa= Empresa.select().where(Empresa.id_empresa== empresa_no)
+                    break
+                else:
+                    print("Debe ingresar un número valido")
+            except:
+                print("Debe ingresar el número que corresponda a la opción elegida") 
+        #Input de nro de expediente
+        while True:
+            nro_expediente = input("Ingrese el numero de expediente ")
+            try:
+                self.expediente_nro = nro_expediente
+                break
+            except:
+                print("Ocurrio un error en la carga de datos")
+        #Etapa a sin iniciar
+        try:
+            self.etapa_obra= Etapa.select().where(Etapa.id_etapa==15)
+        except IntegrityError as e:
+                print("Error al modificar la etapa de obra.", e)
 
     def iniciar_obra(self):
         #Se coloca si la obra es destacada, de compromiso o parte de BA elige
@@ -346,16 +377,16 @@ class Obra (BaseModel):
             query= Financiamiento.select()
             max_id = Financiamiento.select(fn.Max(Financiamiento.id_financiamiento)).scalar()
             for finan in query:
-                print(f"   -{Financiamiento.id_financiamiento}_{Financiamiento.financiamiento}")
-                try:
-                    fianciamiento_no = int(input("Ingrese el número correspondiente al método de financiamiento de la obra "))
-                    if fianciamiento_no >= 0 and fianciamiento_no<= max_id:
-                        self.financiamiento_obra= Financiamiento.select().where(Financiamiento.id_financiamiento== fianciamiento_no)
-                        break
-                    else:
-                        print("Debe ingresar un número valido")
-                except:
-                    print("Debe ingresar el número que corresponda a la opción elegida") 
+                print(f"   -{finan.id_financiamiento}_{finan.financiamiento}")
+            try:
+                fianciamiento_no = int(input("Ingrese el número correspondiente al método de financiamiento de la obra "))
+                if fianciamiento_no >= 0 and fianciamiento_no<= max_id:
+                    self.financiamiento_obra= Financiamiento.select().where(Financiamiento.id_financiamiento== fianciamiento_no)
+                    break
+                else:
+                    print("Debe ingresar un número valido")
+            except:
+                print("Debe ingresar el número que corresponda a la opción elegida") 
         #Etapa a en ejecucion
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==2)
