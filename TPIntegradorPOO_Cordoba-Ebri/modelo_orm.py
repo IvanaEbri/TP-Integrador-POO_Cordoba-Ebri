@@ -397,7 +397,7 @@ class Obra (BaseModel):
             while True:
                 fecha_fin_inicial_input = input("Ingrese la fecha de fin de obra programada, en formato AAAA-MM-DD: ")
                 try:
-                    fecha_fin = datetime.strptime(fecha_inicio_input, "%Y-%m-%d").date()
+                    fecha_fin = datetime.strptime(fecha_fin_inicial_input, "%Y-%m-%d").date()
                     break
                 except ValueError:
                     print("Formato de fecha incorrecto. Intente nuevamente.")
