@@ -306,14 +306,14 @@ class Obra (BaseModel):
         #Modificacion monto contratado
         while True:
             try:
-                monto_contratado = float(input("Ingrese el monto por el que se ha contratado la obra"))
+                monto_contratado = float(input("Ingrese el monto por el que se ha contratado la obra "))
                 if monto_contratado>0:
                     try:
                         self.monto_contratado= monto_contratado
-                        salef.save()
+                        self.save()
                         break
                     except Exception as e:
-                        print("No se pudo asignar el monto contratado para la Obra",e)
+                        print("No se pudo asignar el monto contratado para la Obra.",e)
                 else:
                     print("Debe ingresar un monto mayor a 0")
             except Exception as e:
