@@ -146,12 +146,14 @@ class Obra (BaseModel):
         try:
             self.etapa_obra = Etapa.select().where(Etapa.etapa == 'En  proyecto ')
             self.porcentaje = 0
+            self.licitacion_oferta_empresa= Empresa.select().where(Empresa.id_empresa==369)
             print("A continuacion seleccionará e ingresará los parametros de la obra a registrar")
             
             #Seleccion del entorno de obra
             while True:
                 query= Entorno.select()
                 max_id = Entorno.select(fn.Max(Entorno.id_entorno)).scalar()
+                print("Seleccione el entorno en el que se desenvolverá la obra ")
                 for entorno in query:
                     print(f"   -{entorno.id_entorno}_{entorno.entorno}")
                 try:
@@ -433,9 +435,9 @@ class Obra (BaseModel):
         #Actualizacion del porcentaje de avance
         while True:
             try:
-                ingreso= int(input("Ingrese el porcentaje de avance de obra actual (solo numeros)"))
-                if ingreso>=0:
-                    if ingreso > self.porcentaje:
+                nuevo_porcentaje= int(input("Ingrese el porcentaje de avance de obra actual (solo numeros)"))
+                if nuevo_porcentaje>=0:
+                    if nuevo_porcentaje > self.porcentaje:
                         try:
                             self.porcentaje = nuevo_porcentaje
                         except:
