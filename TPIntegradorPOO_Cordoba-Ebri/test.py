@@ -1,4 +1,4 @@
 from gestionar_obras import *
 
 gestor = GesionarObra()
-gestor.cargar_datos()
+gestor.obtener_indicadores()

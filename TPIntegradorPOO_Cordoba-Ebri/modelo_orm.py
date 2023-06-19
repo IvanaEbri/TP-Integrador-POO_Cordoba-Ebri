@@ -90,7 +90,7 @@ class ObraCiudad (BaseModel):
     tipo_obra = ForeignKeyField(Tipo, backref= 'obras_ciudad')
     area_responsable_obra = ForeignKeyField(AreaResponsable, backref= 'obras_ciudad')
     descripcion = TextField(null = False)
-    monto_contratado = FloatField(null= True)#si no se contrató no tendra monto
+    monto_contratado = FloatField(null= True,default=0)#si no se contrató no tendra monto por ello 0
     #la comuna se obtiene de un join con la tabla barrio
     barrio_obra = ForeignKeyField(Barrio, backref= 'obras_ciudad')
     direccion = TextField(null=True)
@@ -115,7 +115,7 @@ class ObraCiudad (BaseModel):
 
 
     def __str__(self):
-        return(f"{self.nombre}: obra {self.etapa_obra.etapa} en {self.barrio_obra.__str__} por ${self.monto_costo}")
+        return(f"{self.nombre}: obra {self.etapa_obra.etapa} en {self.barrio_obra.__str__} por ${self.monto_contratado}")
 
     class Meta:
         db_table = 'obras_ciudad'
