@@ -1,5 +1,6 @@
 from peewee import *
 from datetime import *
+from dateutil.relativedelta import relativedelta
 
 sqlite_db = SqliteDatabase('./TPIntegradorPOO_Cordoba-Ebri/obras_urbanas.db', pragmas={'journal_mode': 'wal'})
 try:
@@ -246,7 +247,10 @@ class Obra (BaseModel):
         pass
 
     def iniciar_obra(self):
-        #destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
+        #Se coloca si la obra es destacada, de compromiso o parte de BA elige
+        #Se asigna fecha de inicio y finalizacion (y el plazo en meses)
+        #Se determica mano de obra, fuente de financiamiento y se establece la etapa de obra a en ejecucion
+        # destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
         print("Se seleccionará si la obra conlleva Compromiso, es Destacada o forma parte de BA Elige")
         try:
             #Seleccion del compromiso de la obra
@@ -304,6 +308,59 @@ class Obra (BaseModel):
                     print("Debe ingresar el número que corresponda a la opción elegida")
         except Exception as e:
             print("No se pudieron asignar las caracteristicas de la obra", e)
+        #Fechas de inicio y fin programados
+            fecha_inicio_input = 0
+            fecha_fin_inicial_input = 0
+        try:
+            while True:
+                fecha_inicio_input = input("Ingrese la fecha de inicio de obra, en formato AAAA-MM-DD ")
+                try:
+                    fecha_inicio = datetime.strptime(fecha_inicio_input, "%Y-%m-%d").date()
+                    break
+                except ValueError:
+                    print("Formato de fecha incorrecto. Intente nuevamente.")
+            while True:
+                fecha_fin_inicial_input = input("Ingrese la fecha de fin de obra programada, en formato AAAA-MM-DD: ")
+                try:
+                    fecha_fin = datetime.strptime(fecha_inicio_input, "%Y-%m-%d").date()
+                    break
+                except ValueError:
+                    print("Formato de fecha incorrecto. Intente nuevamente.")
+            self.fecha_inicio= fecha_inicio
+            self.fecha_fin_inicias= fecha_fin
+            self.plazo_meses()
+        except Exception as e:
+            print("No se pudieron asignar las fechas de obra", e)
+        #Mano de obra
+        while True:
+            try:
+                mano_obra= int(input("Ingrese la cantidad de personas que seran necesarias para la obra "))
+                if mano_obra>0:
+                    self.mano_obra= mano_obra
+                else:
+                    print("El numero debe ser mayor a 0")
+            except ValueError:
+                print("Se debe ingresar un numero valido")
+        #Financiamiento de obra
+        while True:
+            query= Financiamiento.select()
+            max_id = Financiamiento.select(fn.Max(Financiamiento.id_financiamiento)).scalar()
+            for finan in query:
+                print(f"   -{Financiamiento.id_financiamiento}_{Financiamiento.financiamiento}")
+                try:
+                    fianciamiento_no = int(input("Ingrese el número correspondiente al método de financiamiento de la obra "))
+                    if fianciamiento_no >= 0 and fianciamiento_no<= max_id:
+                        self.financiamiento_obra= Financiamiento.select().where(Financiamiento.id_financiamiento== fianciamiento_no)
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida") 
+        #Etapa a en ejecucion
+        try:
+            self.etapa_obra= Etapa.select().where(Etapa.id_etapa==2)
+        except IntegrityError as e:
+                print("Error al modificar la etapa de obra.", e)
 
     def actualizar_porcentaje_avance(self):
         #modificar valor
@@ -327,3 +384,7 @@ class Obra (BaseModel):
         #cambiar la etapa a resindida 
         pass
 
+    def plazo_meses(self):
+        delta = relativedelta(self.fecha_inicio, self.fecha_fin_inicias)
+        meses = delta.months + 12 * delta.years
+        self.plazo_meses= meses
