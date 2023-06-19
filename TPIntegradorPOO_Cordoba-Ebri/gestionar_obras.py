@@ -140,46 +140,49 @@ class GesionarObra (metaclass = ABCMeta):
         """sentencias necesarias para obtener información de las obras existentes en la 
         base de datos SQLite a través de sentencias ORM"""
         #Listado de todas las áreas responsables.
-        print("Áreas responsables de las obras:")
-        for area in AreaResponsable.select():
-            print(f"    -{area.area_responsable}")
-        print("_"*50)
-        # Listado de todos los tipos de obra.
-        print("Tipos de obra:")
-        for tipo in Tipo.select():
-            print(f"    -{tipo.tipo}")
-        print("_"*50)
-        # Cantidad de obras que se encuentran en cada etapa.
-        print("Obras por etapa de avance:")
-        query = (Etapa.select(Etapa, fn.count(ObraCiudad.id_obra).alias('cant_etapa')).join(ObraCiudad).group_by(Etapa.id_etapa))
-        etapa_y_obras = query.dicts()
-        for result in etapa_y_obras:
-            print(f"    -Etapa: {result['etapa']}- Obras: {result['cant_etapa']}")
-        print("_"*50)
-        # Cantidad de obras por tipo de obra.
-        print("Obras por tipo:")
-        query = (Tipo.select(Tipo, fn.count(ObraCiudad.id_obra).alias('cant_tipo')).join(ObraCiudad).group_by(Tipo.id_tipo))
-        tipo_y_obras = query.dicts()
-        for result in tipo_y_obras:
-            print(f"    -Tipo: {result['tipo']}- Obras: {result['cant_tipo']}")
-        print("_"*50)
-        # Listado de todos los barrios pertenecientes a las comunas 1, 2 y 3.
-        print("Barrios de las comunas 1, 2 y 3")
-        query = Barrio.select().where(Barrio.comuna.in_(["1","2","3"])).order_by(Barrio.comuna)
-        barrio_y_comunas = query.dicts()
-        for result in barrio_y_comunas:
-            print(f"    -Comuna: {result['comuna']} - Barrio: {result['barrio']}")
-        print("_"*50)
-        # Cantidad de obras “Finalizadas” en la comuna 1.
-        query = ObraCiudad.select().join(Etapa, on=(Etapa.id_etapa==ObraCiudad.etapa_obra)).join(Barrio, on=(Barrio.id_barrio==ObraCiudad.barrio_obra)).where(Etapa.etapa == "Finalizada ").where(Barrio.comuna == "1")
-        obras_fin1 = query.count()
-        print(f"Obras Finalizadas en la Comuna 1: {obras_fin1}")
-        print("_"*50)
-        # Cantidad de obras “Finalizadas” en un plazo menor o igual a 24 meses.
-        query = ObraCiudad.select().join(Etapa, on=(Etapa.id_etapa==ObraCiudad.etapa_obra)).where(Etapa.etapa == "Finalizada ").where(ObraCiudad.plazo_meses <= 24 )
-        obras_cortas = query.count() 
-        print(f"Obras Finalizadas en un plazo de 24 meses o menos: {obras_cortas}")
-        print("_"*50)
+        try:
+            print("Áreas responsables de las obras:")
+            for area in AreaResponsable.select():
+                print(f"    -{area.area_responsable}")
+            print("_"*50)
+            # Listado de todos los tipos de obra.
+            print("Tipos de obra:")
+            for tipo in Tipo.select():
+                print(f"    -{tipo.tipo}")
+            print("_"*50)
+            # Cantidad de obras que se encuentran en cada etapa.
+            print("Obras por etapa de avance:")
+            query = (Etapa.select(Etapa, fn.count(ObraCiudad.id_obra).alias('cant_etapa')).join(ObraCiudad).group_by(Etapa.id_etapa))
+            etapa_y_obras = query.dicts()
+            for result in etapa_y_obras:
+                print(f"    -Etapa: {result['etapa']}- Obras: {result['cant_etapa']}")
+            print("_"*50)
+            # Cantidad de obras por tipo de obra.
+            print("Obras por tipo:")
+            query = (Tipo.select(Tipo, fn.count(ObraCiudad.id_obra).alias('cant_tipo')).join(ObraCiudad).group_by(Tipo.id_tipo))
+            tipo_y_obras = query.dicts()
+            for result in tipo_y_obras:
+                print(f"    -Tipo: {result['tipo']}- Obras: {result['cant_tipo']}")
+            print("_"*50)
+            # Listado de todos los barrios pertenecientes a las comunas 1, 2 y 3.
+            print("Barrios de las comunas 1, 2 y 3")
+            query = Barrio.select().where(Barrio.comuna.in_(["1","2","3"])).order_by(Barrio.comuna)
+            barrio_y_comunas = query.dicts()
+            for result in barrio_y_comunas:
+                print(f"    -Comuna: {result['comuna']} - Barrio: {result['barrio']}")
+            print("_"*50)
+            # Cantidad de obras “Finalizadas” en la comuna 1.
+            query = ObraCiudad.select().join(Etapa, on=(Etapa.id_etapa==ObraCiudad.etapa_obra)).join(Barrio, on=(Barrio.id_barrio==ObraCiudad.barrio_obra)).where(Etapa.etapa == "Finalizada ").where(Barrio.comuna == "1")
+            obras_fin1 = query.count()
+            print(f"Obras Finalizadas en la Comuna 1: {obras_fin1}")
+            print("_"*50)
+            # Cantidad de obras “Finalizadas” en un plazo menor o igual a 24 meses.
+            query = ObraCiudad.select().join(Etapa, on=(Etapa.id_etapa==ObraCiudad.etapa_obra)).where(Etapa.etapa == "Finalizada ").where(ObraCiudad.plazo_meses <= 24 )
+            obras_cortas = query.count() 
+            print(f"Obras Finalizadas en un plazo de 24 meses o menos: {obras_cortas}")
+            print("_"*50)
+        except Exception as e:
+            print("Error al obtener los indicadores de las Obras en la ciudad",e)
 
 class Obra():
     #metodos requeridos en la clase
