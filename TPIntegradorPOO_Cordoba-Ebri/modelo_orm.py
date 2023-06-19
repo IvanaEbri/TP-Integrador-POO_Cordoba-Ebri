@@ -92,7 +92,7 @@ class Financiamiento(BaseModel):
     class Meta:
         db_table = 'financiamientos'
 
-class ObraCiudad (BaseModel):
+class Obra (BaseModel):
     """Entidad que recopila las obras realizadas por GCBA"""
     id_obra = AutoField(primary_key = True)
     entorno =ForeignKeyField(Entorno, backref= 'obras_ciudad')
@@ -126,7 +126,180 @@ class ObraCiudad (BaseModel):
 
 
     def __str__(self):
-        return(f"{self.nombre}: obra {self.etapa_obra.etapa} en {self.barrio_obra.__str__} por ${self.monto_contratado}")
+        return(f"{self.nombre}: obra {self.etapa_obra.etapa} en {self.barrio_obra.barrio} (Comuna {self.barrio_obra.comuna}) por ${self.monto_contratado}")
 
     class Meta:
         db_table = 'obras_ciudad'
+
+    
+    def nuevo_proyecto(self):
+        try:
+            self.etapa_obra = Etapa.select().where(Etapa.etapa == 'En  proyecto ')
+            self.porcentaje = 0
+            print("A continuacion seleccionará e ingresará los parametros de la obra a registrar")
+            
+            #Seleccion del entorno de obra
+            while True:
+                query= Entorno.select()
+                max_id = Entorno.select(fn.Max(Entorno.id_entorno)).scalar()
+                for entorno in query:
+                    print(f"   -{entorno.id_entorno}_{entorno.entorno}")
+                try:
+                    entorno_no = int(input("Ingrese el número correspondiente al entorno de la obra "))
+                    if entorno_no >= 0 and entorno_no<= max_id:
+                        self.entorno= Entorno.select().where(Entorno.id_entorno== entorno_no)
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            self.nombre = input("A continuacion escriba el nombre de la obra ")
+            
+            #Seleccion del tipo de obra
+            while True:
+                query= Tipo.select()
+                max_id = Tipo.select(fn.Max(Tipo.id_tipo)).scalar()
+                for tipo in query:
+                    print(f"   -{tipo.id_tipo}_{tipo.tipo}")
+                try:
+                    tipo_no = int(input("Ingrese el número correspondiente al tipo de obra "))
+                    if tipo_no >= 0 and tipo_no<= max_id:
+                        self.tipo_obra = Tipo.select().where(Tipo.id_tipo== tipo_no)
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            #Seleccion del area responsable de la obra
+            while True:
+                query= AreaResponsable.select()
+                max_id = AreaResponsable.select(fn.Max(AreaResponsable.id_area)).scalar()
+                for area in query:
+                    print(f"   -{area.id_area}_{area.area_responsable}")
+                try:
+                    area_no = int(input("Ingrese el número correspondiente al área responsable de la obra "))
+                    if area_no >= 0 and area_no<= max_id:
+                        self.area_responsable_obra = AreaResponsable.select().where(AreaResponsable.id_area==area_no)
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            self.descripcion = input("A continuacion escriba la descripción de la obra ")
+
+            #Seleccion del barrio de la obra
+            while True:
+                query= Barrio.select()
+                max_id = Barrio.select(fn.Max(Barrio.id_barrio)).scalar()
+                for barrio in query:
+                    print(f"   -{barrio.id_barrio}_{barrio.barrio}: Comuna {barrio.comuna}")
+                try:
+                    barrio_no = int(input("Ingrese el número correspondiente al barrio donde se localiza la obra "))
+                    if barrio_no >= 0 and barrio_no<= max_id:
+                        self.barrio_obra = Barrio.select().where(Barrio.id_barrio==barrio_no)
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            self.direccion = input("A continuacion escriba la dirección de la obra ")
+            
+            #asignacion de latitud y longitud
+            while True:
+                print("Se le solicitará la latitud y longitud, recuerde los caracteres permitidos son '-', números y como separador de decimales '.'")
+                lat_no = input("A continuacion escriba la latitud de la obra ")
+                lng_no = input("A continuacion escriba la longitud de la obra ")
+                try:
+                    self.latitud= float(lat_no)
+                    self.longitud= float(lng_no)
+                    break
+                except:
+                    print("Debe cumplir con los caracteres permitidos")
+
+            #Seleccion del compromiso de la obra
+            while True:
+                print("""Ingrese si la obra conlleva COMPROMISO desde el GCBA:
+                    -1_ SI
+                    -2_ NO""")
+                try:
+                    compromiso_no = int(input("Ingrese el número que corresponda para esta obra "))
+                    if compromiso_no== 1:
+                        self.compromiso= True
+                        break
+                    elif compromiso_no ==2:
+                        self.compromiso=False
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            #Seleccion de caracter de destacada de la obra
+            while True:
+                print("""Ingrese si la obra se considera DESTACADA por el GCBA:
+                    -1_ SI
+                    -2_ NO""")
+                try:
+                    destacada_no = int(input("Ingrese el número que corresponda para esta obra "))
+                    if destacada_no== 1:
+                        self.destacada= True
+                        break
+                    elif destacada_no ==2:
+                        self.destacada=False
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+            #Pertenece al programa BA_elige de la obra
+            while True:
+                print("""Ingrese si la obra se se encuentra dentro de BA Elige del GCBA:
+                    -1_ SI
+                    -2_ NO""")
+                try:
+                    ba_elige_no = int(input("Ingrese el número que corresponda para esta obra "))
+                    if ba_elige_no== 1:
+                        self.ba_elige= True
+                        break
+                    elif ba_elige_no ==2:
+                        self.ba_elige=False
+                        break
+                    else:
+                        print("Debe ingresar un número valido")
+                except:
+                    print("Debe ingresar el número que corresponda a la opción elegida")
+
+        except Exception as e:
+            print("No se pudieron seleccionar los parametros de la obra", e)
+
+    def iniciar_contratacion(self):
+        pass
+
+    def adjudicar_obra(self):
+        pass
+
+    def iniciar_obra(self):
+        pass
+
+    def actualizar_porcentaje_avance(self):
+        pass
+
+    def incrementar_plazo(self):
+        #paso opcional
+        pass
+
+    def incrementar_mano_obra(self):
+        #paso opcional
+        pass
+
+    def finalizar_obra(self):
+        pass
+
+    def rescindir_obra(self):
+        pass
+
