@@ -240,6 +240,29 @@ class Obra (BaseModel):
 
     def iniciar_contratacion(self):
         #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
+        #Seleccion forma de contratacion
+        while True:
+            query= Contratacion.select()
+            max_id = Contratacion.select(fn.Max(Contratacion.id_contratacion)).scalar()
+            for contratacion in query:
+                print(f"   -{contratacion.id_contratacion}_{contratacion.contratacion}")
+            try:
+                contratacion_no = int(input("Ingrese el número correspondiente al tipo de contratacion de la obra "))
+                if contratacion_no >= 0 and contratacion_no<= max_id:
+                    self.contratacion_obra= Contratacion.select().where(Contratacion.id_contratacion== contratacion_no)
+                    break
+                else:
+                    print("Debe ingresar un número valido")
+            except:
+                print("Debe ingresar el número que corresponda a la opción elegida") 
+        #Input de nro de contratacion
+        while True:
+            nro_contratacion = input("Ingrese el numero de contratación ")
+            try:
+                self.nro_contratacion = nro_contratacion
+                break
+            except:
+                print("Ocurrio un error en la carga de datos")
         #Etapa a en licitacion
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==10)
