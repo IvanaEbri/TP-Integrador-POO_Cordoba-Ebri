@@ -417,9 +417,28 @@ class Obra (BaseModel):
                 print("Error al modificar la etapa de obra.", e)
 
     def actualizar_porcentaje_avance(self):
-        #modificar valor
-        pass
-
+        #Actualizacion del porcentaje de avance
+        while True:
+            try:
+                ingreso= int(input("Ingrese el porcentaje de avance de obra actual (solo numeros)"))
+                if ingreso>=0:
+                    if ingreso > self.porcentaje:
+                        try:
+                            self.porcentaje = nuevo_porcentaje
+                        except:
+                            print("Ocurrio un error al cargar la actualizacion")
+                        break
+                    else:
+                        a=input("Ingreso un valor menor al porcentaje de avance existente ¿Desea intentarlo nuevamente? (S/N) ")
+                        if a == "S" or a=="s":
+                            pass
+                        else:
+                            break
+                else:
+                    print("Debe ingresar un valor mayor a 0")
+            except ValueError:
+                print("Debe ingresar un valor numérico")
+        
     def incrementar_plazo(self):
         #modifica plazo
         #paso opcional
