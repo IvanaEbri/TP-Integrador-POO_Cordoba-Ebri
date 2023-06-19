@@ -401,7 +401,7 @@ class Obra (BaseModel):
                     print("Formato de fecha incorrecto. Intente nuevamente.")
             self.fecha_inicio= fecha_inicio
             self.fecha_fin_inicias= fecha_fin
-            self.plazo_meses()
+            self.calculo_plazo_meses()
         except Exception as e:
             print("No se pudieron asignar las fechas de obra", e)
         #Mano de obra
@@ -410,6 +410,7 @@ class Obra (BaseModel):
                 mano_obra= int(input("Ingrese la cantidad de personas que seran necesarias para la obra "))
                 if mano_obra>0:
                     self.mano_obra= mano_obra
+                    break
                 else:
                     print("El numero debe ser mayor a 0")
             except ValueError:
@@ -475,7 +476,7 @@ class Obra (BaseModel):
                 except ValueError:
                     print("Ingrese el número entero.")
             self.fecha_fin_inicias += relativedelta(months=extension_meses)
-            self.plazo_meses()
+            self.calculo_plazo_meses()
             self.save()
         except Exception as e:
             print("No se pudo extender el plazo de obra", e)
@@ -514,7 +515,7 @@ class Obra (BaseModel):
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
 
-    def plazo_meses(self):
+    def calculo_plazo_meses(self):
         delta = relativedelta(self.fecha_inicio, self.fecha_fin_inicias)
         meses = delta.months + 12 * delta.years
         self.plazo_meses= meses
