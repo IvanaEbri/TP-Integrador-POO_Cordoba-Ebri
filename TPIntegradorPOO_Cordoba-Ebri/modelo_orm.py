@@ -450,12 +450,21 @@ class Obra (BaseModel):
         pass
 
     def finalizar_obra(self):
-        #asigna finalizada a la etapa y porcentaje = 100
-        pass
+        #Etapa a finalizada y porcentaje 100%
+        try:
+            self.etapa_obra= Etapa.select().where(Etapa.id_etapa==1)
+            self.porcentaje=100
+            print("Se ha finalizado la obra")
+        except IntegrityError as e:
+                print("Error al modificar la etapa de obra.", e)
 
     def rescindir_obra(self):
-        #cambiar la etapa a resindida 
-        pass
+        #Etapa a rescindida
+        try:
+            self.etapa_obra= Etapa.select().where(Etapa.id_etapa==3)
+            print("Se ha rescindido la obra")
+        except IntegrityError as e:
+                print("Error al modificar la etapa de obra.", e)
 
     def plazo_meses(self):
         delta = relativedelta(self.fecha_inicio, self.fecha_fin_inicias)
