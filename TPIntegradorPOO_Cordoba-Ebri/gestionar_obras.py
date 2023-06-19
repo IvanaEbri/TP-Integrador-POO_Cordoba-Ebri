@@ -62,7 +62,7 @@ class GesionarObra (metaclass = ABCMeta):
         self.mapear_orm()
         df = self.limpiar_datos()
         #Carga de datos en la tabla 'entorno'
-        ntornos_unique = list(df['entorno'].unique())
+        entornos_unique = list(df['entorno'].unique())
         for elem in entornos_unique:
             try:
                 Entorno.create(entorno = elem)
@@ -146,8 +146,9 @@ class GesionarObra (metaclass = ABCMeta):
         etapa_no = Etapa.select().where(Etapa.etapa == 'En  proyecto ')
         porcentaje_no = 0
         while True:
-            query= 
-            for 
+            #query= 
+            #for
+            pass 
         entorno_no = n
         nombre_no = n
         tipo_no = n 
