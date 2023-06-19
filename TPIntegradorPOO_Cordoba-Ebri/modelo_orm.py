@@ -278,28 +278,36 @@ class Obra (BaseModel):
             print("No se pudieron seleccionar los parametros de la obra", e)
 
     def iniciar_contratacion(self):
+        #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
         pass
 
     def adjudicar_obra(self):
+        #empresa por clave forn(Crear tabla y carga de datos y si elijo pór empresa no necesito la columna cuil pq  esta en tabla empresa) y nro_expediente, etapaa a sin iniciar
         pass
 
     def iniciar_obra(self):
+        #destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
         pass
 
     def actualizar_porcentaje_avance(self):
+        #modificar valor
         pass
 
     def incrementar_plazo(self):
+        #modifica plazo
         #paso opcional
         pass
 
     def incrementar_mano_obra(self):
+        #modifica mao
         #paso opcional
         pass
 
     def finalizar_obra(self):
+        #asigna finalizada a la etapa y porcentaje = 100
         pass
 
     def rescindir_obra(self):
+        #cambiar la etapa a resindida 
         pass
 
