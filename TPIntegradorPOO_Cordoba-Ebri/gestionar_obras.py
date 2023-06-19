@@ -172,6 +172,7 @@ class GesionarObra (metaclass = ABCMeta):
                 break
             else:
                 print("Se debe ingresar 'S' o 'N' para continuar.")
+        return obra_nueva
 
     def obtener_indicadores(self):
         """sentencias necesarias para obtener información de las obras existentes en la 
@@ -220,3 +221,19 @@ class GesionarObra (metaclass = ABCMeta):
             print("_"*50)
         except Exception as e:
             print("Error al obtener los indicadores de las Obras en la ciudad",e)
+
+if __name__=='__main__':
+    gestor= GesionarObra()
+    gestor.cargar_datos()
+    obra1 = gestor.nueva_obra()
+    obra2 = gestor.nueva_obra()
+    obra1.iniciar_contratacion()
+    obra1.adjudicar_obra()
+    obra1.iniciar_obra()
+    obra1.actualizar_porcentaje_avance()
+    obra1.incrementar_plazo()
+    obra1.finalizar_obra()
+    obra2.iniciar_contratacion()
+    obra2.adjudicar_obra()
+    obra2.iniciar_obra()
+    obra2.rescindir_obra()

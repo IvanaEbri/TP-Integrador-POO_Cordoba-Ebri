@@ -141,7 +141,6 @@ class Obra (BaseModel):
 
     class Meta:
         db_table = 'obras_ciudad'
-
     
     def nuevo_proyecto(self):
         try:
