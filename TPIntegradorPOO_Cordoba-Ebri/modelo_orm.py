@@ -299,6 +299,20 @@ class Obra (BaseModel):
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==15)
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
+        #Modificacion monto contratado
+        while True:
+            try:
+                monto_contratado = float(input("Ingrese el monto por el que se ha contratado la obra"))
+                if monto_contratado>0:
+                    try:
+                        self.monto_contratado= monto_contratado
+                        break
+                    except Exception as e:
+                        print("No se pudo asignar el monto contratado para la Obra",e)
+                else:
+                    print("Debe ingresar un monto mayor a 0")
+            except Exception as e:
+                print("Se debe ingresar el monto en numeros y el separador de decimales es '.'",e)
 
     def iniciar_obra(self):
         #Se coloca si la obra es destacada, de compromiso o parte de BA elige
@@ -442,12 +456,34 @@ class Obra (BaseModel):
     def incrementar_plazo(self):
         #modifica plazo
         #paso opcional
-        pass
+        #Fechas de inicio y fin programados
+        try:
+            while True:
+                try:
+                    extension_meses =int(input("Ingrese cuanto meses se atrasara la finalizacion de la obra. "))
+                    if extension_meses>0:
+                        break
+                    else:
+                        print("Se debe ingresar un número mayor a 0")
+                except ValueError:
+                    print("Ingrese el número entero.")
+            self.fecha_fin_inicias += relativedelta(months=extension_meses)
+            self.plazo_meses()
+        except Exception as e:
+            print("No se pudo extender el plazo de obra", e)
 
     def incrementar_mano_obra(self):
-        #modifica mao
         #paso opcional
-        pass
+        #Modificacion mano de obra
+        while True:
+            try:
+                mano_obra= int(input("Ingrese la cantidad de personas que seran necesarias para la obra "))
+                if mano_obra>0:
+                    self.mano_obra= mano_obra
+                else:
+                    print("El numero debe ser mayor a 0")
+            except ValueError:
+                print("Se debe ingresar un numero valido")
 
     def finalizar_obra(self):
         #Etapa a finalizada y porcentaje 100%
