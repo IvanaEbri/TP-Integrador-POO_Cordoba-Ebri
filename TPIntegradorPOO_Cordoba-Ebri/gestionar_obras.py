@@ -37,7 +37,7 @@ class GesionarObra (metaclass = ABCMeta):
         “create_tables(list)” del módulo peewee"""
         #self.conectar_db()
         try:
-            sqlite_db.create_tables([Entorno, Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, Obra])
+            sqlite_db.create_tables([Entorno, Etapa, Tipo, AreaResponsable, Barrio, Empresa, Contratacion, Financiamiento, Obra])
         except Exception as e:
             print("Error al crear las tablas.", e)
             exit()
@@ -105,6 +105,15 @@ class GesionarObra (metaclass = ABCMeta):
                 Barrio.create(barrio=key, comuna = dic_barrio_comuna[key])
             except IntegrityError as e:
                 print("Error al insertar un nuevo registro en la tabla Barrios de Obra.", e)
+
+        #Carga de datos en la tabla 'empresas'
+        empresas_unique = list(df['licitacion_oferta_empresa'].unique())
+        for elem in empresas_unique:
+            try:
+                Empresa.create(empresa = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Empresas contratadas.", e)
+
         #Carga de datos en la tabla 'contrataciones'
         contrataciones_unique = list(df['contratacion_tipo'].unique())
         for elem in contrataciones_unique:
@@ -112,8 +121,9 @@ class GesionarObra (metaclass = ABCMeta):
                 Contratacion.create(contratacion = elem)
             except IntegrityError as e:
                 print("Error al insertar un nuevo registro en la tabla Contrataciones de Obra.", e)
+
         #Carga de datos en la tabla 'financiamientos'
-            financiamientos_unique = list(df['financiamiento'].unique())
+        financiamientos_unique = list(df['financiamiento'].unique())
         for elem in financiamientos_unique:
             try:
                 Financiamiento.create(financiamiento = elem)
@@ -127,12 +137,13 @@ class GesionarObra (metaclass = ABCMeta):
                 tipo_obra = Tipo.get(Tipo.tipo == elem[4])
                 area_responsable_obra = AreaResponsable.get( AreaResponsable.area_responsable == elem[5])
                 barrio_obra = Barrio.get( Barrio.barrio == elem[9])
+                licitacion_oferta_empresa= Empresa.get( Empresa.empresa== elem[21])
                 contratacion_obra = Contratacion.get( Contratacion.contratacion == elem[23])
                 compromiso_bool = self.valor_booleano(elem, 28)
                 destacada_bool = self.valor_booleano(elem, 29)
                 ba_elige_bool = self.valor_booleano(elem, 30)
                 financiamiento_obra =  Financiamiento.get( Financiamiento.financiamiento == elem[35])
-                Obra.create(entorno= entorno_obra, nombre= elem[2], etapa_obra=etapa_obra, tipo_obra=tipo_obra, area_responsable_obra=area_responsable_obra, descripcion= elem[6], monto_contratado= elem[7], barrio_obra=barrio_obra, direccion= elem[10], latitud= elem[11], longitud= elem[12], fecha_inicio= elem[13], fecha_fin_inicias= elem[14],plazo_meses= elem[15],porcentaje= elem[16],licitacion_oferta_empresa= elem[21], licitacion_anio= elem[22], contratacion_obra=contratacion_obra, nro_contratacion= elem[24], cuit_contratista= elem[25], beneficiarios= elem[26], mano_obra= elem[27], compromiso=compromiso_bool, destacada=destacada_bool, ba_elige=ba_elige_bool, expediente_nro= elem[33], financiamiento_obra= financiamiento_obra)
+                Obra.create(entorno= entorno_obra, nombre= elem[2], etapa_obra=etapa_obra, tipo_obra=tipo_obra, area_responsable_obra=area_responsable_obra, descripcion= elem[6], monto_contratado= elem[7], barrio_obra=barrio_obra, direccion= elem[10], latitud= elem[11], longitud= elem[12], fecha_inicio= elem[13], fecha_fin_inicias= elem[14],plazo_meses= elem[15],porcentaje= elem[16],licitacion_oferta_empresa= licitacion_oferta_empresa, licitacion_anio= elem[22], contratacion_obra=contratacion_obra, nro_contratacion= elem[24], beneficiarios= elem[26], mano_obra= elem[27], compromiso=compromiso_bool, destacada=destacada_bool, ba_elige=ba_elige_bool, expediente_nro= elem[33], financiamiento_obra= financiamiento_obra)
             print("Se completó la carga de manera exitosa")
         except IntegrityError as e:
                 print("Error al insertar un nuevo registro en la tabla Obras de la Ciudad.", e)

@@ -70,6 +70,17 @@ class Barrio(BaseModel):
     class Meta:
         db_table = 'barrios'
 
+class Empresa(BaseModel):
+    """Entidad tipo de contratacion de la obra"""
+    id_empresa = AutoField (primary_key = True)
+    empresa = TextField(unique = True)
+
+    def __str__(self):
+        return self.empresa
+
+    class Meta:
+        db_table = 'empresas'
+
 class Contratacion(BaseModel):
     """Entidad tipo de contratacion de la obra"""
     id_contratacion = AutoField (primary_key = True)
@@ -111,11 +122,10 @@ class Obra (BaseModel):
     fecha_fin_inicias = DateField(null=True)
     plazo_meses = IntegerField(null=True)
     porcentaje = IntegerField(null=True)
-    licitacion_oferta_empresa = TextField(null=True)
+    licitacion_oferta_empresa = ForeignKeyField(Empresa, backref= 'obras_ciudad') #accedo al cuit desde la empresa
     licitacion_anio = IntegerField(null=True)
     contratacion_obra = ForeignKeyField(Contratacion, backref= 'obras_ciudad')
     nro_contratacion = TextField(null=True)
-    cuit_contratista = TextField(null=True)
     beneficiarios = TextField(null=True)
     mano_obra = IntegerField(null=True)
     compromiso = BooleanField(default= False)
@@ -219,7 +229,26 @@ class Obra (BaseModel):
                     break
                 except:
                     print("Debe cumplir con los caracteres permitidos")
+            
+            self.compromiso=False
+            self.destacada=False
+            self.ba_elige=False
+            
+        except Exception as e:
+            print("No se pudieron seleccionar los parametros de la obra", e)
 
+    def iniciar_contratacion(self):
+        #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
+        pass
+
+    def adjudicar_obra(self):
+        #empresa por clave forn(Crear tabla y carga de datos y si elijo pór empresa no necesito la columna cuil pq  esta en tabla empresa) y nro_expediente, etapaa a sin iniciar
+        pass
+
+    def iniciar_obra(self):
+        #destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
+        print("Se seleccionará si la obra conlleva Compromiso, es Destacada o forma parte de BA Elige")
+        try:
             #Seleccion del compromiso de la obra
             while True:
                 print("""Ingrese si la obra conlleva COMPROMISO desde el GCBA:
@@ -273,21 +302,8 @@ class Obra (BaseModel):
                         print("Debe ingresar un número valido")
                 except:
                     print("Debe ingresar el número que corresponda a la opción elegida")
-
         except Exception as e:
-            print("No se pudieron seleccionar los parametros de la obra", e)
-
-    def iniciar_contratacion(self):
-        #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
-        pass
-
-    def adjudicar_obra(self):
-        #empresa por clave forn(Crear tabla y carga de datos y si elijo pór empresa no necesito la columna cuil pq  esta en tabla empresa) y nro_expediente, etapaa a sin iniciar
-        pass
-
-    def iniciar_obra(self):
-        #destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
-        pass
+            print("No se pudieron asignar las caracteristicas de la obra", e)
 
     def actualizar_porcentaje_avance(self):
         #modificar valor
