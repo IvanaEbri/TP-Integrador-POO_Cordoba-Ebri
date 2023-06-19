@@ -290,6 +290,17 @@ class Obra (BaseModel):
                     print("Debe ingresar un número valido")
             except:
                 print("Debe ingresar el número que corresponda a la opción elegida") 
+        #Año de licitacion
+        while True:
+            try:
+                anio=int(input("Ingrece el año de licitacion de la obra, formato AAAA "))
+                if anio > 1000:
+                    self.licitacion_anio = anio
+                    break
+                else:
+                    print("Debe ingresar un año valido.")
+            except:
+                print("Debe ingresar un año valido.")
         #Input de nro de expediente
         while True:
             nro_expediente = input("Ingrese el numero de expediente ")
@@ -326,6 +337,14 @@ class Obra (BaseModel):
         # destacada, fecha inicio y fin (asigna plazo en meses), mano de obra y fianciamiento por foreign key, etapa a en ejecucion
         print("Se seleccionará si la obra conlleva Compromiso, es Destacada o forma parte de BA Elige")
         try:
+            #Beneficiarios de la obra
+            while True:
+                benef=input("Escriba quiene seran los beneficiarios de esta obra ")
+                try:
+                    self.beneficiarios=benef
+                    break
+                except Exception as e:
+                    print("Error al asignar el beneficiario. ", e)
             #Seleccion del compromiso de la obra
             while True:
                 print("""Ingrese si la obra conlleva COMPROMISO desde el GCBA:
