@@ -16,7 +16,7 @@ class BaseModel(Model):
 
 class Entorno(BaseModel):
     """Entidad Entorno de obra"""
-    id_etapa = AutoField(primary_key = True)
+    id_entorno = AutoField(primary_key = True)
     entorno = TextField(unique = True, null = False)
     
     def __str__(self):
