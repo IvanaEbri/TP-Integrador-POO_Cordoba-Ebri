@@ -147,6 +147,7 @@ class Obra (BaseModel):
             self.etapa_obra = Etapa.select().where(Etapa.etapa == 'En  proyecto ')
             self.porcentaje = 0
             self.licitacion_oferta_empresa= Empresa.select().where(Empresa.id_empresa==369)
+            self.contratacion_obra = Contratacion.select().where(Contratacion.id_contratacion==2)
             print("A continuacion seleccionará e ingresará los parametros de la obra a registrar")
             
             #Seleccion del entorno de obra
@@ -235,9 +236,10 @@ class Obra (BaseModel):
             self.compromiso=False
             self.destacada=False
             self.ba_elige=False
-            
+            self.save()
         except Exception as e:
             print("No se pudieron seleccionar los parametros de la obra", e)
+
 
     def iniciar_contratacion(self):
         #contratacion_tipo por clave for y nro_contratacion, etapa a en licitacion
@@ -267,6 +269,7 @@ class Obra (BaseModel):
         #Etapa a en licitacion
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==10)
+            self.save()
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
 
@@ -307,6 +310,7 @@ class Obra (BaseModel):
                 if monto_contratado>0:
                     try:
                         self.monto_contratado= monto_contratado
+                        salef.save()
                         break
                     except Exception as e:
                         print("No se pudo asignar el monto contratado para la Obra",e)
@@ -428,6 +432,7 @@ class Obra (BaseModel):
         #Etapa a en ejecucion
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==2)
+            self.save()
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
 
@@ -440,6 +445,7 @@ class Obra (BaseModel):
                     if nuevo_porcentaje > self.porcentaje:
                         try:
                             self.porcentaje = nuevo_porcentaje
+                            self.save()
                         except:
                             print("Ocurrio un error al cargar la actualizacion")
                         break
@@ -470,6 +476,7 @@ class Obra (BaseModel):
                     print("Ingrese el número entero.")
             self.fecha_fin_inicias += relativedelta(months=extension_meses)
             self.plazo_meses()
+            self.save()
         except Exception as e:
             print("No se pudo extender el plazo de obra", e)
 
@@ -481,6 +488,8 @@ class Obra (BaseModel):
                 mano_obra= int(input("Ingrese la cantidad de personas que seran necesarias para la obra "))
                 if mano_obra>0:
                     self.mano_obra= mano_obra
+                    self.save()
+                    break
                 else:
                     print("El numero debe ser mayor a 0")
             except ValueError:
@@ -491,6 +500,7 @@ class Obra (BaseModel):
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==1)
             self.porcentaje=100
+            self.save()
             print("Se ha finalizado la obra")
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
@@ -499,6 +509,7 @@ class Obra (BaseModel):
         #Etapa a rescindida
         try:
             self.etapa_obra= Etapa.select().where(Etapa.id_etapa==3)
+            self.save()
             print("Se ha rescindido la obra")
         except IntegrityError as e:
                 print("Error al modificar la etapa de obra.", e)
@@ -507,3 +518,4 @@ class Obra (BaseModel):
         delta = relativedelta(self.fecha_inicio, self.fecha_fin_inicias)
         meses = delta.months + 12 * delta.years
         self.plazo_meses= meses
+        self.save()
