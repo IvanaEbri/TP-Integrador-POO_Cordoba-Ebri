@@ -14,6 +14,17 @@ class BaseModel(Model):
     class Meta:
         database = sqlite_db
 
+class Entorno(BaseModel):
+    """Entidad Entorno de obra"""
+    id_etapa = AutoField(primary_key = True)
+    entorno = TextField(unique = True, null = False)
+    
+    def __str__(self):
+        return self.entorno
+
+    class Meta:
+        db_table='entornos'
+
 class Etapa(BaseModel):
     """Entidad Etapa de ejecucion"""
     id_etapa = AutoField(primary_key = True)
@@ -84,7 +95,7 @@ class Financiamiento(BaseModel):
 class ObraCiudad (BaseModel):
     """Entidad que recopila las obras realizadas por GCBA"""
     id_obra = AutoField(primary_key = True)
-    entorno = TextField(null= False)
+    entorno =ForeignKeyField(Entorno, backref= 'obras_ciudad')
     nombre = TextField(null= False)
     etapa_obra = ForeignKeyField(Etapa, backref= 'obras_ciudad')
     tipo_obra = ForeignKeyField(Tipo, backref= 'obras_ciudad')

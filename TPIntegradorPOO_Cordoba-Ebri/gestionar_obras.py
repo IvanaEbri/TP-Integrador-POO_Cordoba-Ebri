@@ -37,7 +37,7 @@ class GesionarObra (metaclass = ABCMeta):
         “create_tables(list)” del módulo peewee"""
         #self.conectar_db()
         try:
-            sqlite_db.create_tables([Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
+            sqlite_db.create_tables([Entorno, Etapa, Tipo, AreaResponsable, Barrio, Contratacion, Financiamiento, ObraCiudad])
         except Exception as e:
             print("Error al crear las tablas.", e)
             exit()
@@ -61,6 +61,14 @@ class GesionarObra (metaclass = ABCMeta):
         de las clase del modelo ORM definido"""
         self.mapear_orm()
         df = self.limpiar_datos()
+        #Carga de datos en la tabla 'entorno'
+        ntornos_unique = list(df['entorno'].unique())
+        for elem in entornos_unique:
+            try:
+                Entorno.create(entorno = elem)
+            except IntegrityError as e:
+                print("Error al insertar un nuevo registro en la tabla Entornos de Obra.", e)
+
         #Carga de datos en la tabla 'etapa'
         etapas_unique = list(df['etapa'].unique())
         for elem in etapas_unique:
@@ -114,6 +122,7 @@ class GesionarObra (metaclass = ABCMeta):
         #Carga de datos en la tabla 'obras_ciudad'
         try:
             for elem in df.values:
+                entorno_obra = Entorno.get(Entorno.entorno == elem[1])
                 etapa_obra = Etapa.get(Etapa.etapa == elem[3])
                 tipo_obra = Tipo.get(Tipo.tipo == elem[4])
                 area_responsable_obra = AreaResponsable.get( AreaResponsable.area_responsable == elem[5])
@@ -123,7 +132,7 @@ class GesionarObra (metaclass = ABCMeta):
                 destacada_bool = self.valor_booleano(elem, 29)
                 ba_elige_bool = self.valor_booleano(elem, 30)
                 financiamiento_obra =  Financiamiento.get( Financiamiento.financiamiento == elem[35])
-                ObraCiudad.create(entorno= elem[1], nombre= elem[2], etapa_obra=etapa_obra, tipo_obra=tipo_obra, area_responsable_obra=area_responsable_obra, descripcion= elem[6], monto_contratado= elem[7], barrio_obra=barrio_obra, direccion= elem[10], latitud= elem[11], longitud= elem[12], fecha_inicio= elem[13], fecha_fin_inicias= elem[14],plazo_meses= elem[15],porcentaje= elem[16],licitacion_oferta_empresa= elem[21], licitacion_anio= elem[22], contratacion_obra=contratacion_obra, nro_contratacion= elem[24], cuit_contratista= elem[25], beneficiarios= elem[26], mano_obra= elem[27], compromiso=compromiso_bool, destacada=destacada_bool, ba_elige=ba_elige_bool, expediente_nro= elem[33], financiamiento_obra= financiamiento_obra)
+                ObraCiudad.create(entorno= entorno_obra, nombre= elem[2], etapa_obra=etapa_obra, tipo_obra=tipo_obra, area_responsable_obra=area_responsable_obra, descripcion= elem[6], monto_contratado= elem[7], barrio_obra=barrio_obra, direccion= elem[10], latitud= elem[11], longitud= elem[12], fecha_inicio= elem[13], fecha_fin_inicias= elem[14],plazo_meses= elem[15],porcentaje= elem[16],licitacion_oferta_empresa= elem[21], licitacion_anio= elem[22], contratacion_obra=contratacion_obra, nro_contratacion= elem[24], cuit_contratista= elem[25], beneficiarios= elem[26], mano_obra= elem[27], compromiso=compromiso_bool, destacada=destacada_bool, ba_elige=ba_elige_bool, expediente_nro= elem[33], financiamiento_obra= financiamiento_obra)
         except IntegrityError as e:
                 print("Error al insertar un nuevo registro en la tabla Obras de la Ciudad.", e)
 
@@ -134,7 +143,40 @@ class GesionarObra (metaclass = ABCMeta):
             return False
 
     def nueva_obra(self):
-        pass
+        etapa_no = Etapa.select().where(Etapa.etapa == 'En  proyecto ')
+        porcentaje_no = 0
+        while True:
+            query= 
+            for 
+        entorno_no = n
+        nombre_no = n
+        tipo_no = n 
+        area_no = n
+        descripcion_no =n
+        barrio_no =n 
+        comuna_no =n  #se autocompleta de acuerdo al barrio
+        dieccion_no =n 
+        lat_no =n 
+        lng_no =n 
+        compromiso_no =n 
+        destacada_no =n 
+        ba_elige_no =n 
+        obra_nueva = ObraCiudad(entorno= entorno_no, nombre= nombre_no, etapa_obra=etapa_no, tipo_obra= tipo_no, area_responsable_obra= area_no, descripcion= descripcion_no, barrio_obra= barrio_no, direccion= dieccion_no, latitud= lat_no, longitud= lng_no, porcentaje= porcentaje_no, compromiso=compromiso_no, destacada=destacada_no, ba_elige=ba_elige_no)
+        while True:
+            guardar = input(f"¿Desea guardar la obra {obra_nueva.nombre}? (S/N)")
+            if guardar == "S" or guardar == "s":
+                try:
+                    obra_nueva.save()
+                    obra_nueva.__str__()
+                    print("Se ha cargado de manera correcta la obra.")
+                except Exception as e:
+                    print("Ha fallado el guardado de la obra",e)
+                break
+            elif guardar == "N" or guardar == "n":
+                print("No se guardará la informacion de la obra")
+                break
+            else:
+                pass
 
     def obtener_indicadores(self):
         """sentencias necesarias para obtener información de las obras existentes en la 
