@@ -224,7 +224,7 @@ class GesionarObra (metaclass = ABCMeta):
 
 if __name__=='__main__':
     gestor= GesionarObra()
-    #gestor.cargar_datos()
+    gestor.cargar_datos()
     obra1 = gestor.nueva_obra()
     #obra2 = gestor.nueva_obra()
     #obra1.iniciar_contratacion()

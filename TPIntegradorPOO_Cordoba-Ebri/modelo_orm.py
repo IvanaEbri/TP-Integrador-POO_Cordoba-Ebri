@@ -385,6 +385,8 @@ class Obra (BaseModel):
             fecha_inicio_input = 0
             fecha_fin_inicial_input = 0
         try:
+            fecha_inicio= 0
+            fecha_fin=0
             while True:
                 fecha_inicio_input = input("Ingrese la fecha de inicio de obra, en formato AAAA-MM-DD ")
                 try:
@@ -516,7 +518,7 @@ class Obra (BaseModel):
                 print("Error al modificar la etapa de obra.", e)
 
     def calculo_plazo_meses(self):
-        delta = relativedelta(self.fecha_inicio, self.fecha_fin_inicias)
+        delta = relativedelta(self.fecha_fin_inicias, self.fecha_inicio)
         meses = delta.months + 12 * delta.years
         self.plazo_meses= meses
         self.save()
